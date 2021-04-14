@@ -14,6 +14,10 @@ app.get("/perguntar", (req, res) => {
   res.render('perguntar')
 })
 
+app.post("/salvarpergunta", (req, res) => {
+  res.send('formulario recebido')
+})
+
 app.listen(8080, ()=>{
   console.log('Servidor na porta 8080');  
 })

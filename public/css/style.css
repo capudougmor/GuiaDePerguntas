@@ -3,6 +3,9 @@ body {
 }
 
 #guiaLogo {
-  width: 100%;
-  height: 60px;
+  width: 200px;
+}
+
+#formulario-pergunta {
+  margin-top: 5vh;
 }
