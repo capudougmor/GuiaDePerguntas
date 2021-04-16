@@ -6,7 +6,7 @@ const connection = new Sequelize({
   username: 'root',
   password: 'capudougmor',
   database: 'guiaperguntas',
-  port: 3307,
+  port: 3306,
   define: {
     timestamps: true,
     underscored: true,

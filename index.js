@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const bodyparser = require('body-parser')
 const connection = require('./database/database')
+const Pergunta = require('./database/Pergunta')
 
 //Database
 connection.authenticate().then(function() {
@@ -17,7 +18,9 @@ app.use(bodyparser.urlencoded({extended: false}))
 app.use(bodyparser.json())
 
 app.get("/", (req, res) => {
-  res.render('index')
+  Pergunta.findAll({raw: true}).then(perguntas => {
+    res.render('index', {perguntas: perguntas})
+  })
 })
 
 app.get("/perguntar", (req, res) => {
@@ -27,7 +30,12 @@ app.get("/perguntar", (req, res) => {
 app.post("/salvarpergunta", (req, res) => {
   let titulo = req.body.titulo
   let descricao = req.body.descricao
-  res.send(`Forumario recebido: ${titulo} ${descricao} `)
+  Pergunta.create({
+    titulo: titulo,
+    descricao: descricao
+  }).then(() => {
+    res.redirect("/")
+  })
 })
 
 app.listen(8080, ()=>{

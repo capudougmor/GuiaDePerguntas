@@ -1,11 +1,32 @@
 <%- include ('./partials/header.ejs') %>
 
-<body>
+  <body>
+    <%- include('./partials/navbar.ejs') %>
 
-  <%- include('./partials/navbar.ejs') %>
+    <div class="container">
 
-  <H1>tudo certo agora</H1>
-  <a href="perguntar">asdfasgsa</a>
-</body>
+        <a href="perguntar">Perguntar</a>
+        <hr>
+        <h1>Perguntas</h1>
+        <hr>
 
-<%- include('./partials/footer.ejs') %>
+        <% perguntas.forEach(pergunta=> { %>
+
+          <div class="card mt-2">
+            <div class="card-body">
+              <h3>
+                <%= pergunta.descricao %>
+              </h3>
+            </div>
+
+            <div class="card-footer">
+              <button class="btn btn-primary">Responder</button>
+            </div>
+          </div>
+
+          <% }) %>
+    </div>
+
+  </body>
+
+  <%- include('./partials/footer.ejs') %>
