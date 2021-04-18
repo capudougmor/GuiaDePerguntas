@@ -1,28 +1,29 @@
 const express = require('express')
 const app = express()
-const bodyparser = require('body-parser')
 const connection = require('./database/database')
 const Pergunta = require('./database/Pergunta')
 const Resposta = require('./database/Resposta')
 
 //Database
-connection.authenticate().then(function() {
+connection.authenticate().then(function () {
   console.log("Conectado ao banco de dados!")
-}).catch(function(erro) {
-  console.log("Falha ao se conectar ao banco de dados: "+erro)
+}).catch(function (erro) {
+  console.log("Falha ao se conectar ao banco de dados: " + erro)
 })
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
 
-app.use(bodyparser.urlencoded({extended: false}))
-app.use(bodyparser.json())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 app.get("/", (req, res) => {
-  Pergunta.findAll({raw: true, order: [
-    ['id', 'DESC'] // ASC crescente
-  ]}).then(perguntas => {
-    res.render('index', {perguntas: perguntas})
+  Pergunta.findAll({
+    raw: true, order: [
+      ['id', 'DESC'] // ASC crescente
+    ]
+  }).then(perguntas => {
+    res.render('index', { perguntas: perguntas })
   })
 })
 
@@ -44,16 +45,32 @@ app.post("/salvarpergunta", (req, res) => {
 app.get("/pergunta/:id", (req, res) => {
   let id = req.params.id
   Pergunta.findOne({
-    where: {id : id}
+    where: { id: id }
   }).then(pergunta => {
-    if(pergunta!= undefined) {
-      res.render('pergunta', { pergunta })
-    }else {
+    if (pergunta != undefined) {
+      Resposta.findAll({
+        where: {perguntaId: pergunta.id},
+        order: [['id', 'DESC']]
+      }).then((respostas)=>{
+        res.render("pergunta", { pergunta, respostas })        
+      })
+    } else {
       res.redirect('/')
     }
   })
 })
 
-app.listen(8080, ()=>{
-  console.log('Servidor na porta 8080');  
+app.post("/responder", (req, res) => {
+  let corpo = req.body.corpo
+  let perguntaId = req.body.pergunta
+  Resposta.create({
+    corpo: corpo,
+    perguntaId: perguntaId
+  }).then(() => {
+    res.redirect("/pergunta/"+perguntaId)
+  })
+})
+
+app.listen(8080, () => {
+  console.log('Servidor na porta 8080');
 })
